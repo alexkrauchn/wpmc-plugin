@@ -26,7 +26,7 @@ Showcase your commitment to website excellence by displaying your site's real-ti
 Elevate your WordPress website management to new heights with the WPMissionControl Plugin. Embrace peace of mind, transparency, and proactive maintenance in one comprehensive package.
 
 == Installation ==
-1. Install or upload [WPMissionControl](https://github.com/alexkrauchn/wpmc-plugin.zip) to the `/wp-content/plugins/` directory
+1. Install or upload [WPMissionControl](https://github.com/alexkrauchn/wpmc-plugin/archive/refs/heads/dist.zip) to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Enter your API key on the plugin's Settings page to connect your website to the system. The code can be generated in your WPMissionControl Dashboard. Refer to detailed instruction [`here`](https://wpmissioncontrol.com/knowledgebase/how-to-setup-your-wordpress-website-health-monitoring).
 
