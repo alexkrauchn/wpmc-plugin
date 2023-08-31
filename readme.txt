@@ -31,8 +31,8 @@ Elevate your WordPress website management to new heights with the WPMissionContr
 3. Enter your API key on the plugin's Settings page to connect your website to the system. The code can be generated in your WPMissionControl Dashboard. Refer to detailed instruction [`here`](https://wpmissioncontrol.com/knowledgebase/how-to-setup-your-wordpress-website-health-monitoring).
 
 == Screenshots ==
-[https://wpmc-static-assets.s3.eu-central-1.amazonaws.com/wpmc_plugin_settings_screenshot_desktop.png Screenshot of the plugin's Settings page on desktop]
-[https://wpmc-static-assets.s3.eu-central-1.amazonaws.com/wpmc_plugin_settings_screenshot_mobile.png Screenshot of the plugin's Settings page on mobile]
+1. [https://wpmc-static-assets.s3.eu-central-1.amazonaws.com/wpmc_plugin_settings_screenshot_desktop.png Screenshot of the plugin's Settings page on desktop]
+2. [https://wpmc-static-assets.s3.eu-central-1.amazonaws.com/wpmc_plugin_settings_screenshot_mobile.png Screenshot of the plugin's Settings page on mobile]
 == Changelog ==
 = v1.0.0 =
 
