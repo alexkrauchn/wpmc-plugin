@@ -1,12 +1,11 @@
 <?php
 /*
 Plugin Name: WPMissionControl
-Plugin URI: https://wpmissioncontrol.com
+Plugin URI: https://wpmissioncontrol.com/plugins/wp-mission-control
 Description: Remote maintenance and security system for Wordpress websites provided by WPMissionControl Center.
 Author: WPMissionControl Team
 Version: 1.0
 Requires PHP: 5.3.0
-Author URI: https://wpmissioncontrol.com
 Text Domain: wpmc
 */
 
