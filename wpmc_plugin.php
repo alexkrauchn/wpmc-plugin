@@ -1,12 +1,14 @@
 <?php
 /*
-Plugin Name: WPMissionControl
-Plugin URI: https://wpmissioncontrol.com/plugins/wp-mission-control
-Description: Remote maintenance and security system for Wordpress websites provided by WPMissionControl Center.
-Author: WPMissionControl Team
-Version: 1.0
-Requires PHP: 5.3.0
-Text Domain: wpmc
+Plugin Name: 	WPMissionControl
+Plugin URI: 	https://wpmissioncontrol.com/plugins/wp-mission-control
+Description: 	Remote maintenance and security system for Wordpress websites provided by WPMissionControl Center.
+Author: 		WPMissionControl Team
+License: 		GPLv2 or later
+License URI: 	https://www.gnu.org/licenses/gpl-2.0.html
+Version: 		1.0.0
+Requires PHP: 	5.3.0
+Text Domain: 	wpmc
 */
 
 if ( !class_exists( 'WPMC_Plugin' ) ) {
@@ -21,7 +23,7 @@ if ( !class_exists( 'WPMC_Plugin' ) ) {
 		define( 'WPMC_MAINTENANCE_EMAIL', 'maintenance@wpmissioncontrol.com' );
 	}
 	if ( !defined( 'WPMC_STATIC_ASSETS_URL') ) {
-		define( 'WPMC_STATIC_ASSETS_URL', 'https://wpmc-static-assets.s3.eu-central-1.amazonaws.com' );
+		define( 'WPMC_STATIC_ASSETS_URL', plugin_dir_url( __FILE__ ) . '/assets' );
 	}
 
 	require_once dirname( __FILE__ ) . '/includes/WPMC_Plugin.php';

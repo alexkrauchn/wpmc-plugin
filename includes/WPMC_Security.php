@@ -40,6 +40,9 @@ class WPMC_Security {
 	}
 
 	public function get_plugins_files_checksum_data() {
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
 		$plugins = get_plugins();
 		$result = array();
 
@@ -51,7 +54,7 @@ class WPMC_Security {
 				'files'		=> array()
 			);
 
-			$plugin_path = WP_PLUGIN_DIR . '/' . $plugin_slug;
+			$plugin_path = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $plugin_slug;
 			$plugin_folder_struct = explode( DIRECTORY_SEPARATOR, $plugin_slug );
 
 			if ( count( $plugin_folder_struct ) > 1 ) {

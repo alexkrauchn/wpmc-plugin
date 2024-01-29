@@ -25,8 +25,8 @@ class WPMissionControlSettings {
 		$this->options = get_option( 'wpmc_options' );
 		?>
 		<div class="wrap">
-			<img src="<?php echo WPMC_STATIC_ASSETS_URL; ?>/logo.png" alt="WPMissionControl Logo">
-			<h2><?php _e( 'Remote Monitoring System', 'wp-mission-control' ); ?></h2>
+			<img src="<?php echo esc_url( WPMC_STATIC_ASSETS_URL ); ?>/logo.png" alt="WPMissionControl Logo">
+			<h2><?php esc_html_e( 'Remote Monitoring System', 'wp-mission-control' ); ?></h2>
 			<br>
 			<form method="post" action="options.php">
 				<?php
@@ -86,7 +86,8 @@ class WPMissionControlSettings {
 			'<input class="regular-text" type="text" name="wpmc_options[api_key]" id="api_key" value="%s">',
 			isset( $this->options['api_key'] ) ? esc_attr( $this->options['api_key'] ) : ''
 		);
-		echo '<p>You can obtain your API Key in the WPMissionControl dashboard at <a href="https://wpmissioncontrol.com">wpmissioncontrol.com</a></p>';
+		?>
+		<p>You can obtain your API Key in the WPMissionControl dashboard at <a href="https://wpmissioncontrol.com" target="_blank">wpmissioncontrol.com</a></p><?php
 	}
 
 	public function wp_mission_control_info_section() {

@@ -1,9 +1,9 @@
 === WPMissionControl ===
 Contributors: alexkrauchn
 Donate link: http://wpmissioncontrol.com
-Tags: business, maintenance, monitoring, malware, security, protection
+Tags: business, maintenance, monitoring, malware, security
 Requires at least: 5.4
-Tested up to: 5.4
+Tested up to: 6.4
 Stable tag: 1.0.0
 Requires PHP: 5.6
 License: GPLv2 or later
@@ -25,14 +25,18 @@ Showcase your commitment to website excellence by displaying your site's real-ti
 
 Elevate your WordPress website management to new heights with the WPMissionControl Plugin. Embrace peace of mind, transparency, and proactive maintenance in one comprehensive package.
 
+== Disclaimer ==
+This plugins sends information about your website, including it's core version, health points, and checksums of the core, installed themes and plugins files to [wpmissioncontrol.com](wpmissioncontrol.com). This information is only sent with the proper API key set, used to assess overall health of your website and is not shared with any thrid party. Consider reading our [Privacy Policy](https://wpmissioncontrol.com/privacy-policy) and [Terms of Service](https://wpmissioncontrol.com/terms-of-service).
+
 == Installation ==
 1. Install or upload [WPMissionControl](https://github.com/alexkrauchn/wpmc-plugin/archive/refs/heads/dist.zip) to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Enter your API key on the plugin's Settings page to connect your website to the system. The code can be generated in your WPMissionControl Dashboard. Refer to detailed instruction [`here`](https://wpmissioncontrol.com/knowledgebase/how-to-setup-your-wordpress-website-health-monitoring).
 
 == Screenshots ==
-1. [https://wpmc-static-assets.s3.eu-central-1.amazonaws.com/wpmc_plugin_settings_screenshot_desktop.png Screenshot of the plugin's Settings page on desktop]
-2. [https://wpmc-static-assets.s3.eu-central-1.amazonaws.com/wpmc_plugin_settings_screenshot_mobile.png Screenshot of the plugin's Settings page on mobile]
+1. Screenshot of the plugin's Settings page on desktop
+2. Screenshot of the plugin's Settings page on mobile
+
 == Changelog ==
 = v1.0.0 =
 

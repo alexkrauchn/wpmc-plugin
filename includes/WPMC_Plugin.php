@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 
 class WPMC_Plugin {
 	protected static $instance, $options;
-	public static $version = '1.0';
+	public static $version = '1.0.0';
 
 	public function __construct() {
         add_action( 'rest_api_init', array( $this, 'add_api_endpoints' ) );
@@ -48,9 +48,15 @@ class WPMC_Plugin {
 
 	public static function checks() {
 		$wpmc_security = new WPMC_Security;
-		$health_status = get_transient( 'health-check-site-status-result' );;
+		
+		$health_status = get_transient( 'health-check-site-status-result' );
 		if ( empty( $health_status ) ) {
-			self::maybe_create_scheduled_event_or_run_check();
+			self::maybe_create_scheduled_health_event();
+			if ( class_exists( 'WP_Site_Health' ) ) {
+				$wp_site_health = new \WP_Site_Health();
+				$wp_site_health->wp_cron_scheduled_check();
+				$health_status = get_transient( 'health-check-site-status-result' );
+			}
 		} else {
 			$decoded = json_decode( $health_status );
 			if ( isset( $decoded->good ) && !empty( $decoded->good ) ) {
@@ -146,8 +152,8 @@ class WPMC_Plugin {
 		return false;
 	}
 
-	private static function maybe_create_scheduled_event_or_run_check() {
-		do_action( 'wp_site_health_scheduled_check' );
+	private static function maybe_create_scheduled_health_event() {
+		// do_action( 'wp_site_health_scheduled_check' );
 		if ( ! wp_next_scheduled( 'wp_site_health_scheduled_check' ) && ! wp_installing() ) {
 			wp_schedule_event( time() + DAY_IN_SECONDS, 'daily', 'wp_site_health_scheduled_check' );
 		}
