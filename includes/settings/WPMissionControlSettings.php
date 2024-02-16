@@ -13,8 +13,8 @@ class WPMissionControlSettings {
 
 	public function wp_mission_control_settings_add_plugin_page() {
 		add_options_page(
-			__( 'WPMissionControl Settings', 'wp-mission-control' ),// page_title
-			__( 'WPMissionControl', 'wp-mission-control' ),// menu_title
+			__( 'WPMissionControl Settings', 'wpmissioncontrol' ),// page_title
+			__( 'WPMissionControl', 'wpmissioncontrol' ),// menu_title
 			'manage_options', // capability
 			'wp-mission-control-settings', // menu_slug
 			array( $this, 'wp_mission_control_settings_create_admin_page' ) // function
@@ -26,7 +26,7 @@ class WPMissionControlSettings {
 		?>
 		<div class="wrap">
 			<img src="<?php echo esc_url( WPMC_STATIC_ASSETS_URL ); ?>/logo.png" alt="WPMissionControl Logo">
-			<h2><?php esc_html_e( 'Remote Monitoring System', 'wp-mission-control' ); ?></h2>
+			<h2><?php esc_html_e( 'Remote Monitoring System', 'wpmissioncontrol' ); ?></h2>
 			<br>
 			<form method="post" action="options.php">
 				<?php
@@ -48,14 +48,14 @@ class WPMissionControlSettings {
 
 		add_settings_section(
 			'wp_mission_control_settings_setting_section',
-			__( 'Settings', 'wp-mission-control' ),
+			__( 'Settings', 'wpmissioncontrol' ),
 			array( $this, 'wp_mission_control_settings_section_info' ),
 			'wp-mission-control-settings-admin'
 		);
 
 		add_settings_field(
-			'api_key',
-			__( 'API Key', 'wp-mission-control' ),
+			'wp_mission_control_api_key',
+			__( 'API Key', 'wpmissioncontrol' ),
 			array( $this, 'api_key_callback' ),
 			'wp-mission-control-settings-admin',
 			'wp_mission_control_settings_setting_section'
@@ -63,7 +63,7 @@ class WPMissionControlSettings {
 
 		add_settings_section(
 			'wp_mission_control_settings_info_section',
-			__( 'Information', 'wp-mission-control' ),
+			__( 'Information', 'wpmissioncontrol' ),
 			array( $this, 'wp_mission_control_info_section' ),
 			'wp-mission-control-info-admin'
 		);

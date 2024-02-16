@@ -114,28 +114,28 @@ class WPMC_Plugin {
 			// return true;
 			return new WP_Error(
 				'rest_forbidden',
-                __( 'Only requests via HTTPS are permitted', 'wpmc' ),
+                __( 'Only requests via HTTPS are permitted', 'wpmissioncontrol' ),
                 array( 'status' => 403 )
 			);
 		}
 		if ( empty( $headers['authenticationtoken'][0] ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-                __( 'Authentication token is required', 'wpmc' ),
+                __( 'Authentication token is required', 'wpmissioncontrol' ),
                 array( 'status' => 403 )
 			);
 		}
 		if ( empty( self::$options['api_key'] ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-                __( 'Authentication token is not set', 'wpmc' ),
+                __( 'Authentication token is not set', 'wpmissioncontrol' ),
                 array( 'status' => 403 )
 			);
 		}
 		if ( self::$options['api_key'] != $headers['authenticationtoken'][0] ) {
 			return new WP_Error(
 				'rest_forbidden',
-                __( 'Wrong authentication token', 'wpmc' ),
+                __( 'Wrong authentication token', 'wpmissioncontrol' ),
                 array( 'status' => 403 )
 			);
 		}
