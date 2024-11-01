@@ -4,8 +4,8 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 class WPMC_Plugin {
+	public static $version = '1.0.5';
 	protected static $instance, $options;
-	public static $version = '1.0.0';
 
 	public function __construct() {
         add_action( 'rest_api_init', array( $this, 'add_api_endpoints' ) );
@@ -46,6 +46,11 @@ class WPMC_Plugin {
         delete_option( 'wpmc_options' );
 	}
 
+	public static function plugin_settings_link( $links ) {
+	    array_push( $links, '<a href=' . admin_url( 'options-general.php?page=wp-mission-control-settings' ) . '>' . __( 'Settings' ) . '</a>' );
+	    return $links;
+	}
+
 	public static function checks() {
 		$wpmc_security = new WPMC_Security;
 		
@@ -72,6 +77,7 @@ class WPMC_Plugin {
 
 		return array(
 			'api_key'				=> self::$options['api_key'],
+			'plugin_version'		=> self::$version,
 			'shell_exec'			=> WPMC_Security::is_shell_exec_enabled(),
 			'wp_version'			=> get_bloginfo( 'version' ),
 			'locale'				=> get_locale(),
@@ -94,6 +100,27 @@ class WPMC_Plugin {
 			'show_in_index'			=> false
 		) );
 
+		register_rest_route( 'wpmc/v1' , '/files/scan', array(
+			'methods'				=> WP_REST_Server::READABLE,
+			'callback'				=> array( $this, 'rest_scan_files_handler' ),
+			'permission_callback'	=> array( $this, 'rest_access_validator' ),
+			'show_in_index'			=> false
+		) );
+
+		register_rest_route( 'wpmc/v1' , '/files/prepare', array(
+			'methods'				=> WP_REST_Server::READABLE,
+			'callback'				=> array( $this, 'rest_prepare_files_handler' ),
+			'permission_callback'	=> array( $this, 'rest_access_validator' ),
+			'show_in_index'			=> false
+		) );
+
+		register_rest_route( 'wpmc/v1' , '/files/download', array(
+			'methods'				=> WP_REST_Server::READABLE,
+			'callback'				=> array( $this, 'rest_downloaad_files_handler' ),
+			'permission_callback'	=> array( $this, 'rest_access_validator' ),
+			'show_in_index'			=> false
+		) );
+
 	}
 
 	public function rest_status_handler( $request ) {
@@ -106,10 +133,77 @@ class WPMC_Plugin {
 		return $response;
 	}
 
+	public function rest_scan_files_handler( $request ) {
+		try {
+			$wpmc_security = new WPMC_Security;
+			$result = $wpmc_security->scan_files();
+			if ( !$result['success'] ) {
+				$response = new WP_REST_Response( $result );
+				$response->set_status( 500 );
+			}
+			$response = new WP_REST_Response( $result );
+			$response->set_status( 200 );
+		} catch ( Exception $e ) {
+			$response = new WP_REST_Response( array(
+				'error'	=> $e,
+			) );
+			$response->set_status( 500 );
+		}
+		return $response;
+	}
+
+	public function rest_prepare_files_handler( $request ) {
+		try {
+			$params = $request->get_params();
+			$wpmc_security = new WPMC_Security;
+			$result = $wpmc_security->prepare_combined_file( $params );
+			if ( !$result['success'] ) {
+				$response = new WP_REST_Response( $result );
+				$response->set_status( 500 );
+			}
+			$response = new WP_REST_Response( $result );
+			$response->set_status( 200 );
+		} catch ( Exception $e ) {
+			$response = new WP_REST_Response( array(
+				'error'	=> $e,
+			) );
+			$response->set_status( 500 );
+		}
+		return $response;
+	}
+
+	public function rest_downloaad_files_handler( $request ) {
+		try {
+			$wpmc_security = new WPMC_Security;
+			$result = $wpmc_security->serve_combined_file();
+			if ( !$result['success'] ) {
+				$response = new WP_REST_Response( $result );
+				$response->set_status( 500 );
+			}
+			$response = new WP_REST_Response();
+	        $response->set_headers( [
+	            'Content-Type'   		=> "application/zip",
+	            'Content-Length' 		=> $result['length'],
+	            'Content-Disposition'	=> 'inline; filename="' . $result['filename'] . '"'
+	        ] );
+	        $stream = $result['stream'];
+	        add_filter( 'rest_pre_serve_request', function() use( $stream ) {
+				echo $stream; 
+				return true;
+			} );
+		} catch ( Exception $e ) {
+			$response = new WP_REST_Response( array(
+				'error'	=> $e,
+			) );
+			$response->set_status( 500 );
+		}
+		return $response;
+	}
+
+
 	public function rest_access_validator( $request ) {
 		$headers = $request->get_headers();
 		
-		$authenticationtoken = false;
 		if ( !$this->is_https_request() ) {
 			// return true;
 			return new WP_Error(

@@ -6,7 +6,7 @@ Description: 	Remote maintenance and security system for Wordpress websites prov
 Author: 		WPMissionControl Team
 License: 		GPLv2 or later
 License URI: 	https://www.gnu.org/licenses/gpl-2.0.html
-Version: 		1.0.0
+Version: 		1.0.5
 Requires PHP: 	5.3.0
 Text Domain: 	wpmissioncontrol
 */
@@ -32,6 +32,8 @@ if ( !class_exists( 'WPMC_Plugin' ) ) {
 	register_activation_hook(   __FILE__, array( 'WPMC_Plugin', 'activate_plugin' ) );
 	register_deactivation_hook( __FILE__, array( 'WPMC_Plugin', 'deactivate_plugin' ) );
 	register_uninstall_hook(    __FILE__, array( 'WPMC_Plugin', 'uninstall_plugin' ) );
+
+	add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( 'WPMC_Plugin', 'plugin_settings_link' ) );
 
 	add_action( 'plugins_loaded', array( 'WPMC_Plugin', 'init' ) );
 }

@@ -114,4 +114,171 @@ class WPMC_Security {
 		return $name;
 	}
 
+	public function scan_files() {
+		$files_to_process = get_transient( 'wpmc_scanned_files' );
+		if ( !$files_to_process ) {
+			$scanned_files = self::scan_dir( WP_CONTENT_DIR );
+			$files_to_process = array();
+			$extensions = array(
+				'php',
+				// 'js',
+				'htaccess'
+			);
+			$excludes = array(
+				'wp-config.php',
+			);
+			foreach ( $scanned_files as $path => $file ) {
+				$ext = pathinfo( $file, PATHINFO_EXTENSION );
+				if ( in_array( $ext, $extensions ) || in_array( basename( $file ), $excludes ) ) {
+					$files_to_process[$path] = $file;
+				}
+			}
+			set_transient( 'wpmc_scanned_files', $files_to_process, 1 * DAY_IN_SECONDS );
+		}
+		return array(
+			'success'				=> true,
+			'message'				=> 'Files scanned successfully',
+			'total_files_count'		=> count( $files_to_process ),
+		);
+	}
+
+	public function prepare_combined_file( $params ) {
+		$upload_dir = wp_get_upload_dir();
+		if ( $upload_dir['error'] ) {
+			return array(
+				'success'	=> false,
+				'message'	=> $upload_dir['error']
+			);
+		}
+
+		$output_dir = $upload_dir['path'] . '/wpmc_files_export';
+		if ( !file_exists( $output_dir ) ) {
+			mkdir( $output_dir );
+		}
+
+		$output_file = $output_dir . '/wpmc_combined_files.txt';
+		$file_mode = 'a';
+		if ( empty( $params['offset'] ) || $params['offset'] == 0 ) {
+			$file_mode = 'w';
+			if ( file_exists( $output_file ) ) {
+				unlink( $output_file );
+				$other_files = self::scan_dir( $output_dir );
+				foreach ( $other_files as $path => $file ) {
+					if ( pathinfo( $file, PATHINFO_EXTENSION ) != 'txt' ) {
+						unlink( $path );
+					}
+				}
+			}
+			$htaccess_file = $output_dir . '/.htaccess';
+			$htaccess = fopen( $htaccess_file, 'w' );
+			if ( !$htaccess ) {
+				return array(
+					'success'	=> false,
+					'message'	=> 'Failed to open htaccess file'
+				);
+			}
+			fwrite( $htaccess, 'order deny,allow' . PHP_EOL . 'deny from all' );
+			fclose( $htaccess );
+		}
+
+		$output = fopen( $output_file, $file_mode );
+		if ( !$output ) {
+			return array(
+				'success'	=> false,
+				'message'	=> 'Failed to open output file'
+			);
+		}
+
+		$files_to_process = get_transient( 'wpmc_scanned_files' );
+		if ( !$files_to_process ) {
+			$scanned_files = self::scan_dir( ABSPATH );
+			$files_to_process = array();
+			$extensions = array(
+				'php',
+				// 'js',
+				'htaccess'
+			);
+			$excludes = array(
+				'wp-config.php',
+			);
+			foreach ( $scanned_files as $path => $file ) {
+				$ext = pathinfo( $file, PATHINFO_EXTENSION );
+				if ( in_array( $ext, $extensions ) || in_array( basename( $file ), $excludes ) ) {
+					$files_to_process[$path] = $file;
+				}
+			}
+			set_transient( 'wpmc_scanned_files', $files_to_process, 1 * DAY_IN_SECONDS );
+		}
+		$total_files_count = count( $files_to_process );
+		$offset = 0;
+		if ( !empty( $params['offset'] ) ) {
+			$offset = $params['offset'];
+		}
+		$limit = 10000;
+		if ( !empty( $params['limit'] ) ) {
+			$limit = $params['limit'];
+		}
+		$files_to_process = array_slice( $files_to_process, $offset, $limit );
+		if ( count( $files_to_process ) == 0 ) {
+			return array(
+				'success'		=> false,
+				'message'		=> 'No files in range',
+			);
+		}
+
+		$result = array();
+		$files_count = 0;
+		foreach ( $files_to_process as $path => $file ) {
+			$contents = file_get_contents( $file );
+			$checksum = md5_file( $file );
+	        fwrite( $output, "[FILE_START: $file [FILE_CHECKSUM: $checksum]]\n" );
+	        fwrite( $output, $contents . "\n" );
+	        fwrite( $output, "[FILE_END]\n" );
+	        $files_count++;
+		}
+		fclose( $output );
+
+		return array(
+			'success'				=> true,
+			'message'				=> 'Output file generated successfully',
+			'files_count'			=> $files_count,
+			'total_files_count'		=> $total_files_count,
+		);
+	}
+
+	public function serve_combined_file() {
+		$upload_dir = wp_get_upload_dir();
+		if ( $upload_dir['error'] ) {
+			return array(
+				'success'	=> false,
+				'message'	=> $upload_dir['error']
+			);
+		}
+		$output_dir = $upload_dir['path'] . '/wpmc_files_export';
+		$output_file = $output_dir . '/wpmc_combined_files.txt';
+
+		$zip_file = $output_dir . '/wpmc_combined_files.zip';
+		$zip = new ZipArchive();
+    	if ( $zip->open( $zip_file, ZipArchive::CREATE ) === TRUE ) {
+	        $zip->addFile( $output_file, basename( $output_file ) );
+	        $zip->close();
+	    } else {
+	        throw new Exception("Cannot create zip file.");
+	    }
+
+	    ob_start();
+	    readfile( $zip_file );
+	    $result = array(
+	    	'success'	=> true,
+	    	'stream'	=> ob_get_clean(),
+	    	'length'	=> filesize( $zip_file ),
+	    	'filename'	=> basename( $zip_file ),
+	    );
+
+	    unlink( $output_file );
+	    unlink( $zip_file );
+
+		return $result;
+	}
+
 }
